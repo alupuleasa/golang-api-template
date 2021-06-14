@@ -2,10 +2,13 @@ package rest
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
 
+	"github.com/efimovalex/wallet/adapters/model"
 	"github.com/julienschmidt/httprouter"
 	"github.com/rs/zerolog/log"
 )
@@ -18,18 +21,31 @@ type REST struct {
 
 	DB Database
 
-	Addr string `key:"addr" description:"address the server should bind to" default:":80"`
+	Addr    string `key:"addr" description:"address the server should bind to" default:":80"`
+	AuthKey string
 }
 
-type Database interface{}
-
-func (r *REST) Init() (err error) {
-	return nil
+// Database - interface with the database
+type Database interface {
+	CreateWallet(OwnerAccountID uint64) (w *model.Wallet, err error)
+	GetWallets(limit, offset uint64) (wallets []model.Wallet, err error)
+	RemoveFunds(walletID uint64, sum float64) (err error)
+	AddFunds(walletID uint64, sum float64) (err error)
 }
 
 // Start - Starts the http listener
 func (r *REST) Start(e chan error) {
-	r.router = httprouter.New()
+	// simulate an auth system
+	key := make([]byte, 64)
+	_, err := rand.Read(key)
+	if err != nil {
+		e <- err
+
+		return
+	}
+
+	r.AuthKey = fmt.Sprintf("%x", key)
+	log.Info().Msgf("Auth API KEY: %s", r.AuthKey)
 
 	r.loadRoutes()
 
@@ -46,15 +62,16 @@ func (r *REST) Start(e chan error) {
 	e <- r.server.ListenAndServe()
 }
 
+// Stop - gracefully stops the REST API
 func (r *REST) Stop() error {
 	var err error // error holder
-	ctxShutDown, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctxShutDown, cancel := context.WithTimeout(context.Background(), 25*time.Second)
 	defer func() {
 		cancel()
 	}()
 
 	if err = r.server.Shutdown(ctxShutDown); err != nil {
-		log.Error().Err(err).Msg("server Shutdown Failed")
+		log.Error().Err(err).Msg("server shutdown failed")
 
 		return err
 	}
@@ -65,4 +82,23 @@ func (r *REST) Stop() error {
 	}
 
 	return err
+}
+
+// WriteError - formats the error response
+func (r *REST) WriteError(w http.ResponseWriter, statusCode int, err string) {
+
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+	w.WriteHeader(statusCode)
+
+	errStruct := struct {
+		ErrorStatus     string `json:"status,omitempty"`
+		ErrorStatusCode int    `json:"code,omitempty"`
+		Message         string `json:"message,omitempty"`
+	}{
+		http.StatusText(statusCode),
+		statusCode,
+		err,
+	}
+	json.NewEncoder(w).Encode(errStruct)
 }

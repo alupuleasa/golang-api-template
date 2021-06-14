@@ -50,7 +50,7 @@ func (s *Service) loadConfig() error {
 func (s *Service) startService() {
 	s.errChan = make(chan error) // error response channel
 
-	s.REST.DB = s.Client
+	s.REST.DB = &s.Client
 	// spawn REST listener
 	go s.REST.Start(s.errChan)
 
