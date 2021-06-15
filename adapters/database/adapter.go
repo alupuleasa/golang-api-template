@@ -29,8 +29,18 @@ func (c *Client) Init() (err error) {
 		return err
 	}
 
+	err = c.db.Ping()
+	if err != nil {
+		log.Error().Err(err).Msgf("Unable to connect to database: %v", err)
+		return err
+	}
+
 	c.logger = log.With().Str("module", "database").Logger()
 	c.logger.Debug().Msgf("Connected to %s", c.Address)
 
 	return nil
+}
+
+func New(db *sql.DB) *Client {
+	return &Client{db: db}
 }

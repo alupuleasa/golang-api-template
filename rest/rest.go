@@ -29,8 +29,8 @@ type REST struct {
 type Database interface {
 	CreateWallet(OwnerAccountID uint64) (w *model.Wallet, err error)
 	GetWallets(limit, offset uint64) (wallets []model.Wallet, err error)
-	RemoveFunds(walletID uint64, sum float64) (err error)
-	AddFunds(walletID uint64, sum float64) (err error)
+	GetWallet(ID uint64) (wallets model.Wallet, err error)
+	UpdateWalletFunds(walletID uint64, sum float64) (w *model.Wallet, err error)
 }
 
 // Start - Starts the http listener
@@ -100,5 +100,16 @@ func (r *REST) WriteError(w http.ResponseWriter, statusCode int, err string) {
 		statusCode,
 		err,
 	}
+
 	json.NewEncoder(w).Encode(errStruct)
+}
+
+// WriteJsonrror - formats the json response
+func (r *REST) WriteJson(w http.ResponseWriter, statusCode int, response interface{}) {
+
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+	w.WriteHeader(statusCode)
+
+	json.NewEncoder(w).Encode(response)
 }

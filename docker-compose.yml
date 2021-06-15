@@ -2,7 +2,7 @@ services:
   wallet-service:
     container_name: wallet-service
     image: golang:latest
-    ports: ["3000:3000"]
+    ports: ["80:80"]
     environment:
       - GO111MODULE=on
       - GOPATH=/go
@@ -24,8 +24,9 @@ services:
     tty: true
     stdin_open: true
     hostname: database
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d
     environment:
-      - POSTGRES_DB=wallet
       - POSTGRES_USER=pgx
       - POSTGRES_PASSWORD=pgx2021
       - POSTGRES_HOST_AUTH_METHOD=trust
@@ -39,5 +40,4 @@ services:
       - network1
 networks:
   network1:
-    external: true
-    name: catchon-network
+    name: network
