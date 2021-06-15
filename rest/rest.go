@@ -30,7 +30,7 @@ type Database interface {
 	CreateWallet(OwnerAccountID uint64) (w *model.Wallet, err error)
 	GetWallets(limit, offset uint64) (wallets []model.Wallet, err error)
 	GetWallet(ID uint64) (wallets model.Wallet, err error)
-	UpdateWalletFunds(walletID uint64, sum float64) (w *model.Wallet, err error)
+	UpdateWalletFunds(walletID uint64, sum float64, reference string) (w *model.Wallet, err error)
 }
 
 // Start - Starts the http listener

@@ -35,7 +35,6 @@ func (r *REST) CreateWallet(w http.ResponseWriter, req *http.Request, _ httprout
 
 // GetWallets - endpoint that retrieves all wallets
 func (r *REST) GetWallets(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
-
 	dbWallets, err := r.DB.GetWallets(0, 0)
 	if err != nil {
 		r.WriteError(w, http.StatusInternalServerError, err.Error())
@@ -70,7 +69,8 @@ func (r *REST) UpdateWalletFunds(w http.ResponseWriter, req *http.Request, p htt
 		return
 	}
 	sum := struct {
-		Sum float64 `json:"sum"`
+		Sum       float64 `json:"sum"`
+		Reference string  `json:"reference"`
 	}{}
 	defer req.Body.Close()
 
@@ -80,7 +80,7 @@ func (r *REST) UpdateWalletFunds(w http.ResponseWriter, req *http.Request, p htt
 		return
 	}
 
-	wallet, err := r.DB.UpdateWalletFunds(ID, sum.Sum)
+	wallet, err := r.DB.UpdateWalletFunds(ID, sum.Sum, sum.Reference)
 	if err != nil {
 		r.WriteError(w, http.StatusInternalServerError, err.Error())
 		return
