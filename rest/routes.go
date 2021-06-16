@@ -14,4 +14,5 @@ func (r *REST) loadRoutes() {
 	r.router.GET("/wallets/:id", r.Auth(r.GetWallet))
 
 	r.router.PATCH("/wallets/:id/funds", r.Auth(r.UpdateWalletFunds))
+	r.router.PATCH("/transaction/:id/reference", r.Auth(r.UpdateTransaction))
 }

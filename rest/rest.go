@@ -30,7 +30,8 @@ type Database interface {
 	CreateWallet(OwnerAccountID uint64) (w *model.Wallet, err error)
 	GetWallets(limit, offset uint64) (wallets []model.Wallet, err error)
 	GetWallet(ID uint64) (wallets model.Wallet, err error)
-	UpdateWalletFunds(walletID uint64, sum float64, reference string) (w *model.Wallet, err error)
+	UpdateWalletFunds(walletID uint64, sum float64, ref string) (w *model.Wallet, t *model.Transaction, err error)
+	UpdateTransaction(tID uint64, ref string) (t *model.Transaction, err error)
 }
 
 // Start - Starts the http listener
@@ -104,8 +105,8 @@ func (r *REST) WriteError(w http.ResponseWriter, statusCode int, err string) {
 	json.NewEncoder(w).Encode(errStruct)
 }
 
-// WriteJsonrror - formats the json response
-func (r *REST) WriteJson(w http.ResponseWriter, statusCode int, response interface{}) {
+// WriteJSON - formats the json response
+func (r *REST) WriteJSON(w http.ResponseWriter, statusCode int, response interface{}) {
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.Header().Set("X-Content-Type-Options", "nosniff")

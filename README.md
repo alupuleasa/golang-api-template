@@ -1,4 +1,7 @@
 # Part 1: Wallet Service
+(part 2 at the bottom)
+&nbsp; 
+
 Service whose sole responsibility is to store the
 funds and provide the functionality for manipulating the balance.
 
@@ -46,5 +49,6 @@ You can use args (1st column name) or environment (2nd column name) to update th
 docker compose down -v && docker compose up -V -d
 ```
 
+&nbsp; 
 
 # Part 2: [PayPal workflow](https://www.websequencediagrams.com/files/render?link=bqEqgYcgtmXAbBDod1BQGGiye84xcKO5uRR0kIoBMEt1i7FxvpsRrns9dT84lqaU)

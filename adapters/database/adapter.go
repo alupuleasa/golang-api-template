@@ -7,9 +7,11 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
+	// sql driver
 	_ "github.com/jackc/pgx/v4/stdlib"
 )
 
+// Client - database client
 type Client struct {
 	db     *sql.DB
 	logger zerolog.Logger
@@ -22,6 +24,7 @@ type Client struct {
 	Database string `key:"database" description:"databse" default:"wallet"`
 }
 
+// Init - initilizes the database client trough zconfig
 func (c *Client) Init() (err error) {
 	c.db, err = sql.Open("pgx", fmt.Sprintf("postgres://%s:%s@%s/%s", c.Username, c.Password, c.Address, c.Database))
 	if err != nil {
@@ -41,6 +44,7 @@ func (c *Client) Init() (err error) {
 	return nil
 }
 
+// New - Creates a new Client from a sql.DB
 func New(db *sql.DB) *Client {
 	return &Client{db: db}
 }

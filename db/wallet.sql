@@ -11,7 +11,7 @@ CREATE TABLE wallet (idx SERIAL NOT NULL, funds REAL NOT NULL CHECK (funds >= 0)
 ALTER TABLE wallet
     OWNER to pgx;
 
-CREATE TABLE transaction (idx SERIAL NOT NULL, sum REAL NOT NULL, ref varchar(255) ,created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, last_modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (idx));
+CREATE TABLE transaction (idx SERIAL NOT NULL, wallet_id INT NOT NULL REFERENCES wallet (idx), sum REAL NOT NULL, reference varchar(255), created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, last_modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (idx));
 ALTER TABLE transaction
     OWNER to pgx;
 
@@ -28,6 +28,6 @@ CREATE DATABASE wallet_test
 CREATE TABLE wallet (idx SERIAL NOT NULL, funds REAL NOT NULL CHECK (funds >= 0), uuid CHAR(36) NOT NULL, owner_id INT NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, last_modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (idx), UNIQUE (owner_id));
 ALTER TABLE wallet
     OWNER to pgx_test;
-CREATE TABLE transaction (idx SERIAL NOT NULL, sum REAL NOT NULL, ref varchar(255) ,created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, last_modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (idx));
+CREATE TABLE transaction (idx SERIAL NOT NULL, wallet_id INT NOT NULL REFERENCES wallet (idx), sum REAL NOT NULL, reference varchar(255), created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, last_modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (idx));
 ALTER TABLE transaction
     OWNER to pgx_test;
