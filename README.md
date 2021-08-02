@@ -1,14 +1,5 @@
-# Part 1: Wallet Service
+# Part 1: API Service
 (part 2 at the bottom)
-&nbsp; 
-
-Service whose sole responsibility is to store the
-funds and provide the functionality for manipulating the balance.
-
-&nbsp; 
-
-## [API documentation](https://documenter.getpostman.com/view/2833399/TzeWF7TQ)
-
 &nbsp; 
 
 # Running the service in docker env
@@ -16,7 +7,7 @@ funds and provide the functionality for manipulating the balance.
 docker compose up -d
 make shell
 make build
-make run # or ./wallet run
+make run # or ./api run
 ```
 
 &nbsp; 
@@ -33,7 +24,7 @@ make test
 
 # Configure service for other envs see --help option 
 ```
-./wallet run --help
+./api run --help
 ```
 
 You can use args (1st column name) or environment (2nd column name) to update these running parameters. [Docs](https://github.com/synthesio/zconfig)
@@ -51,4 +42,3 @@ docker compose down -v && docker compose up -V -d
 
 &nbsp; 
 
-# Part 2: [PayPal workflow](https://www.websequencediagrams.com/files/render?link=bqEqgYcgtmXAbBDod1BQGGiye84xcKO5uRR0kIoBMEt1i7FxvpsRrns9dT84lqaU)
