@@ -1,8 +1,9 @@
+version: "3.6"
 services:
   wallet-service:
     container_name: wallet-service
     image: golang:latest
-    ports: ["80:80"]
+    ports: ["8001:8001"]
     environment:
       - GO111MODULE=on
       - GOPATH=/go
@@ -16,8 +17,7 @@ services:
     networks:
       - network1
     depends_on:
-        database:
-            condition: service_healthy
+      - database
   database:
     image: postgres:latest
     container_name: database
@@ -39,5 +39,11 @@ services:
     networks:
       - network1
 networks:
+  default:
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.255.0/24
   network1:
-    name: network
+    external: true
+    name: wallet-network

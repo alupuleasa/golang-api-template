@@ -21,7 +21,7 @@ type REST struct {
 
 	DB Database
 
-	Addr    string `key:"addr" description:"address the server should bind to" default:":80"`
+	Addr    string `key:"addr" description:"address the server should bind to" default:":8001"`
 	AuthKey string
 }
 
@@ -37,7 +37,7 @@ type Database interface {
 // Start - Starts the http listener
 func (r *REST) Start(e chan error) {
 	// simulate an auth system
-	key := make([]byte, 64)
+	key := make([]byte, 16)
 	_, err := rand.Read(key)
 	if err != nil {
 		e <- err
