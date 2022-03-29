@@ -11,12 +11,13 @@ jobs:
     steps:
       - checkout
       - run: |
-          go version
+          curl -L "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o ~/docker-compose
+          chmod +x ~/docker-compose
+          sudo mv ~/docker-compose /usr/local/bin/docker-compose
           make up
           make brun
-#          go mod download
-#          go build -v ./...
-#          go test -v ./...
+          make test
+          make cov
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
