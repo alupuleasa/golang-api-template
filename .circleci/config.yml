@@ -10,14 +10,23 @@ jobs:
       - image: golang:latest
     steps:
       - checkout
-      - run: |
+      - run:
+        name: Install Docker Compose
+        environment:
+          COMPOSE_VERSION: '3.6'
+        command: |
           curl -L "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o ~/docker-compose
           chmod +x ~/docker-compose
-          sudo mv ~/docker-compose /usr/local/bin/docker-compose
-          make up
-          make brun
-          make test
-          make cov
+          mv ~/docker-compose /usr/local/bin/docker-compose
+      - run:
+        name: Build images of services & Start all services declared in docker-compose.yml
+        command: make up
+      - run:
+        name: Run tests
+        command: make test
+      - run:
+        name: Run coverage
+        command: make cov
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
