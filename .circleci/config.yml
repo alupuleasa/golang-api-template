@@ -11,13 +11,15 @@ jobs:
     steps:
       - checkout
       - run:
+          name: "Start CI/CD"
+          command: sudo apt-get update && sudo apt-get install -y cowsay && cowsay Continuous Integration Rocks!
+      - run:
           name: Install Docker Compose
           environment:
             COMPOSE_VERSION: '3.6'
           command: |
-            curl -L "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o ~/docker-compose
-            chmod +x ~/docker-compose
-            sudo mv ~/docker-compose /usr/local/bin/docker-compose
+            sudo apt-get install docker.io
+            sudo apt-get install docker-compose
       - run:
           name: Build images of services & Start all services declared in docker-compose.yml
           command: sudo make up
