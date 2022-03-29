@@ -35,7 +35,7 @@ jobs:
       - run:
           name: Run tests
           command: |
-            make shell |  make test & exit
+            make shell | make test & exit
       - run:
           name: Run coverage
           command: |
