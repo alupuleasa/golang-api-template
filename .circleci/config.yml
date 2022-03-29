@@ -28,20 +28,23 @@ jobs:
       - run:
           name: Start all services declared in docker-compose.yml
           command: docker-compose up -d
-      # because Circle CI already runs in a docker container our makefile won't run tests in our docker container
-      # because Circle CI has a dockerenv file so we must enter in our container from here
-      - run:
-          name: Enter in our docker container
-          command: make shell
       - run:
           name: Build images of services & Start all services declared in docker-compose.yml
-          command: make up
+          command: 
+            make up
       - run:
           name: Run tests
-          command: make test
+          command: |
+            make shell
+            make test
+            exit
+
       - run:
           name: Run coverage
-          command: make cov
+          command: |
+            make shell 
+            make cov
+            exit
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
