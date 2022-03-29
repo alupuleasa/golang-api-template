@@ -22,6 +22,7 @@ jobs:
           command: |
             curl -fsSL https://get.docker.com -o get-docker.sh
             sudo sh get-docker.sh
+            sudo service docker start
       - run:
           name: Build images of services & Start all services declared in docker-compose.yml
           command: sudo make up
