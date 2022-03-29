@@ -8,6 +8,7 @@ BUILD_NAME ?=wallet-service
 IMAGENAME=$(BUILD_NAME)
 DOCKERCMD=docker exec -t $(IMAGENAME) $(MAKECMD)
 DOCKERICMD=docker exec -i -t $(IMAGENAME) $(MAKECMD)
+RUNTEST=docker run --rm -v $$(pwd):/app -w /app golangci/golangci-lint:v1.45.2 golangci-lint run -E misspell -E dupl -E gocyclo -E revive -E gofmt -E bodyclose -E unparam -E gocritic --modules-download-mode=vendor --timeout 10m ./...
 
 MAKECMD= /usr/bin/make --no-print-directory
 RUNCMD=run
@@ -19,8 +20,14 @@ GOCOV=$(GOCMD) tool cover -html=coverage.out -o coverage.html
 GOGET=$(GOCMD) get
 
 check: ## Runs different golang checks
-	docker run --rm -v $$(pwd):/app -w /app golangci/golangci-lint:v1.23.3 golangci-lint run -E misspell -E dupl -E gocyclo -E golint -E gofmt -E bodyclose -E unparam -E gocritic --modules-download-mode=vendor --timeout 10m ./...
-	
+	@if [ -f /.dockerenv ] ; then \
+  		curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.45.2; \
+  		golangci-lint --version; \
+  		golangci-lint run -E misspell -E dupl -E gocyclo -E revive -E gofmt -E bodyclose -E unparam -E gocritic --modules-download-mode=vendor --timeout 10m ./...; \
+	else \
+		$(RUNTEST); \
+	fi;
+
 shell: 
 	@docker-compose exec wallet-service bash
 
