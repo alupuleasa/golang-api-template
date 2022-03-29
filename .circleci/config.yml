@@ -10,22 +10,11 @@ jobs:
       - image: cimg/go:1.18.0
     steps:
       - checkout
-      - run: go version
-
-      - name: Fetch required Go modules
-        run: go mod download
-
-      - name: Build
-        run: go build -v ./...
-
-      - name: Build Docker image
-        uses: docker/build-push-action@v2
-        with:
-          push: false
-          tags: ${{ github.event.repository.name }}:latest, ${{ github.repository }}:latest
-
-      - name: Run functional tests
-        run: go test -v ./...
+      - run:
+        - go version
+        - go mod download
+        - go build -v ./...
+        - go test -v ./...
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
