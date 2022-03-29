@@ -9,8 +9,8 @@ jobs:
     docker:
       - image: cimg/go:1.18.0
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - checkout
+      - run: go version
 
       - name: Fetch required Go modules
         run: go mod download
