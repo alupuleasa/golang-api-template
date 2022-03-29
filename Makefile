@@ -8,7 +8,7 @@ BUILD_NAME ?=wallet-service
 IMAGENAME=$(BUILD_NAME)
 DOCKERCMD=docker exec -t $(IMAGENAME) $(MAKECMD)
 DOCKERICMD=docker exec -i -t $(IMAGENAME) $(MAKECMD)
-RUNTEST=docker run --rm -v $$(pwd):/app -w /app golangci/golangci-lint:v1.45.2 golangci-lint run -E misspell -E dupl -E gocyclo -E revive -E gofmt -E bodyclose -E unparam -E gocritic --modules-download-mode=vendor --timeout 10m ./...
+RUNCHECK=docker run --rm -v $$(pwd):/app -w /app golangci/golangci-lint:v1.45.2 golangci-lint run -E misspell -E dupl -E gocyclo -E revive -E gofmt -E bodyclose -E unparam -E gocritic --modules-download-mode=vendor --timeout 10m ./...
 
 MAKECMD= /usr/bin/make --no-print-directory
 RUNCMD=run
@@ -25,7 +25,8 @@ check: ## Runs different golang checks
   		golangci-lint --version; \
   		golangci-lint run -E misspell -E dupl -E gocyclo -E revive -E gofmt -E bodyclose -E unparam -E gocritic --modules-download-mode=vendor --timeout 10m ./...; \
 	else \
-		$(RUNTEST); \
+#		$(RUNCHECK); \
+		$(DOCKERCMD) check; \
 	fi;
 
 shell: 
