@@ -35,11 +35,11 @@ jobs:
       - run:
           name: Run tests
           command: |
-            docker exec -it wallet-service make test
+            docker exec -it wallet-service /usr/bin/make test
       - run:
           name: Run coverage
           command: |
-            docker exec -it wallet-service make cov
+            docker exec -it wallet-service /usr/bin/make cov
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
