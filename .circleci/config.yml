@@ -23,11 +23,11 @@ jobs:
           name: Build images of services declared in docker-compose.yml
           command: docker-compose build
       - run:
-          name: Start all services declared in docker-compose.yml
-          command: docker-compose up -d
-      - run:
           name: Create networks declared in docker-compose.yml
           command: docker network create wallet-network
+      - run:
+          name: Start all services declared in docker-compose.yml
+          command: docker-compose up -d
       - run:
           name: Build images of services & Start all services declared in docker-compose.yml
           command: make up
