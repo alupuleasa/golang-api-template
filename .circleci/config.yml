@@ -10,11 +10,13 @@ jobs:
       - image: golang:latest
     steps:
       - checkout
-      - run: | 
+      - run: |
           go version
-          go mod download
-          go build -v ./...
-          go test -v ./...
+          make up
+          make brun
+#          go mod download
+#          go build -v ./...
+#          go test -v ./...
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
