@@ -11,25 +11,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - checkout
-      # - run:
-      #     name: "Start CI/CD"
-      #     command: |
-      #         sudo apt-get update && sudo apt-get install -y cowsay
-      #         sudo cowsay Continuous Integration Rocks!
-      - run:
-          name: Install Docker Compose
-          environment:
-            COMPOSE_VERSION: '3.6'
-          command: |
-            curl -fsSL https://get.docker.com -o get-docker.sh
-            sudo sh get-docker.sh
-      - run:
-          name: Build images of services & Start all services declared in docker-compose.yml
-          command: sudo make up
-      - run:
-          name: Run tests
-          command: sudo make test
-      - run:
-          name: Run coverage
-          command: sudo make cov
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Build images of services & Start all services declared in docker-compose.yml
+        run: sudo make up
+      - name: Run tests
+        run: sudo make test
+      - name: Run coverage
+        run: sudo make cov
