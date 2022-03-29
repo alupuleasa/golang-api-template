@@ -20,8 +20,8 @@ jobs:
           environment:
             COMPOSE_VERSION: '3.6'
           command: |
-            sudo apt-get install docker.io
-            sudo apt-get install docker-compose
+            curl -fsSL https://get.docker.com -o get-docker.sh
+            sudo sh get-docker.sh
       - run:
           name: Build images of services & Start all services declared in docker-compose.yml
           command: sudo make up
