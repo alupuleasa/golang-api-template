@@ -39,7 +39,7 @@ jobs:
       - run:
           name: Run coverage
           command: |
-            docker exec -it wallet-service /usr/bin/make cov
+            docker exec -it wallet-service ls -la
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
