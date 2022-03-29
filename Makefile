@@ -10,6 +10,9 @@ DOCKERCMD=docker exec -t $(IMAGENAME) $(MAKECMD)
 DOCKERICMD=docker exec -i -t $(IMAGENAME) $(MAKECMD)
 RUNCHECK=docker run --rm -v $$(pwd):/app -w /app golangci/golangci-lint:v1.45.2 golangci-lint run -E misspell -E dupl -E gocyclo -E revive -E gofmt -E bodyclose -E unparam -E gocritic --modules-download-mode=vendor --timeout 10m ./...
 
+export RED='\033[0;31m'
+export NC='\033[0m'
+
 MAKECMD= /usr/bin/make --no-print-directory
 RUNCMD=run
 GOCMD=go
@@ -106,3 +109,22 @@ docker_clean:  ## Destroys the docker images
 ps:  ## Shows the docker image stats
 	@[ -f /.dockerenv ] || true
 	@docker ps -a
+
+cov: ## Runs coverage tool
+	@if [ -f /.dockerenv ] ; then \
+		$(GOCOV); \
+	else \
+		echo "running coverage in docker env ..." ; \
+		$(DOCKERCMD) cov;\
+	fi;
+	@exit $(.SHELLSTATUS)
+
+
+#cov: ## Runs coverage tool
+#	@if grep -q docker /proc/1/cgroup ; then \
+#		$(GOCOV); \
+#	else \
+#		echo "running cov in docker env ..." ; \
+#		$(DOCKERCMD) cov;\
+#	fi;
+#	@exit $(.SHELLSTATUS)
