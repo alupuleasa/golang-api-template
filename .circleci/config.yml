@@ -35,7 +35,7 @@ jobs:
       - run:
           name: Run tests
           command: |
-            docker exec -it wallet-service /usr/bin/make test
+            docker exec -it wallet-service pwd
       - run:
           name: Run coverage
           command: |
