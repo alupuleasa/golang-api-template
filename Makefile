@@ -12,6 +12,12 @@ RUNCHECK=docker run --rm -v $$(pwd):/app -w /app golangci/golangci-lint:v1.45.2 
 
 export RED='\033[0;31m'
 export NC='\033[0m'
+#IMAGENAME = wallet-service
+ListALlContainersCMD=docker container ls -aq --filter name=$(IMAGENAME)
+ListRunningContainersCMD=docker container ls -q --filter name=$(IMAGENAME)
+StopContainerCMD=docker container stop $$($(ListRunningContainersCMD))
+RemoveContainerCMD=docker container rmi $$($(ListALlContainersCMD))
+#DOCKERRUN=docker run -v $(PWD):/go/src/wallet-service/ --workdir /go/src/wallet-service/ --rm -e "ENV_VAR1=value1" -e "ENV_VAR2=$(CONSUL_HTTP_ADDR)" --name wallet-service -i -t -p 8081:8082 wallet-service /bin/ash;
 
 MAKECMD= /usr/bin/make --no-print-directory
 RUNCMD=run
