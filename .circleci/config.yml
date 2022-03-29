@@ -28,10 +28,11 @@ jobs:
       - run:
           name: Start all services declared in docker-compose.yml
           command: docker-compose up -d
-      # because Circle CI already runs in a docker container our makefile won't run tests ok so we must enter our docker container
+      # because Circle CI already runs in a docker container our makefile won't run tests in our docker container
+      # because Circle CI has a dockerenv file so we must enter in our container from here
       - run:
-          name: Enter in our docker containers because Circle 
-          command: docker-compose up -d
+          name: Enter in our docker container
+          command: make shell
       - run:
           name: Build images of services & Start all services declared in docker-compose.yml
           command: make up
