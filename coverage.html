@@ -1,0 +1,424 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>rest: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/efimovalex/wallet/rest/filters.go (0.0%)</option>
+				
+				<option value="file1">github.com/efimovalex/wallet/rest/healthcheck.go (0.0%)</option>
+				
+				<option value="file2">github.com/efimovalex/wallet/rest/rest.go (29.0%)</option>
+				
+				<option value="file3">github.com/efimovalex/wallet/rest/routes.go (0.0%)</option>
+				
+				<option value="file4">github.com/efimovalex/wallet/rest/transactions.go (66.7%)</option>
+				
+				<option value="file5">github.com/efimovalex/wallet/rest/wallets.go (61.5%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package rest
+
+import (
+        "net/http"
+
+        "github.com/julienschmidt/httprouter"
+)
+
+// Auth simulates an auth filter
+func (r *REST) Auth(h httprouter.Handle) httprouter.Handle <span class="cov0" title="0">{
+        return func(w http.ResponseWriter, req *http.Request, ps httprouter.Params) </span><span class="cov0" title="0">{
+                if r.AuthKey != req.Header.Get("Authorization") </span><span class="cov0" title="0">{
+                        // Delegate request to the given handle
+
+                        //
+                        // Usually we would check if the user trying to do this has access to the requested resource
+                        //
+
+                        h(w, req, ps)
+                }</span> else<span class="cov0" title="0"> {
+                        // Request Basic Authentication otherwise
+                        w.Header().Set("WWW-Authenticate", "Basic realm=Restricted")
+                        http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+                }</span>
+        }
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package rest
+
+import (
+        "net/http"
+
+        "github.com/julienschmidt/httprouter"
+)
+
+// Healthcheck - checks if the service is up
+func (r *REST) Healthcheck(w http.ResponseWriter, req *http.Request, _ httprouter.Params) <span class="cov0" title="0">{
+        w.WriteHeader(http.StatusOK)
+}</span>
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package rest
+
+import (
+        "context"
+        "crypto/rand"
+        "encoding/json"
+        "fmt"
+        "net/http"
+        "time"
+
+        "github.com/efimovalex/wallet/adapters/model"
+        "github.com/julienschmidt/httprouter"
+        "github.com/rs/zerolog/log"
+)
+
+// REST - struct that aggregates and inits all the
+// required packages for the REST API to run
+type REST struct {
+        router *httprouter.Router
+        server *http.Server
+
+        DB Database
+
+        Addr    string `key:"addr" description:"address the server should bind to" default:":8001"`
+        AuthKey string
+}
+
+// Database - interface with the database
+type Database interface {
+        CreateWallet(OwnerAccountID uint64) (w *model.Wallet, err error)
+        GetWallets(limit, offset uint64) (wallets []model.Wallet, err error)
+        GetWallet(ID uint64) (wallets model.Wallet, err error)
+        UpdateWalletFunds(walletID uint64, sum float64, ref string) (w *model.Wallet, t *model.Transaction, err error)
+        UpdateTransaction(tID uint64, ref string) (t *model.Transaction, err error)
+}
+
+// Start - Starts the http listener
+func (r *REST) Start(e chan error) <span class="cov0" title="0">{
+        // simulate an auth system
+        key := make([]byte, 16)
+        _, err := rand.Read(key)
+        if err != nil </span><span class="cov0" title="0">{
+                e &lt;- err
+
+                return
+        }</span>
+
+        <span class="cov0" title="0">r.AuthKey = fmt.Sprintf("%x", key)
+        log.Info().Msgf("Auth API KEY: %s", r.AuthKey)
+
+        r.loadRoutes()
+
+        // log startup
+        log.Info().Msg(fmt.Sprintf("HTTP Service listening on %s", r.Addr))
+
+        r.server = &amp;http.Server{
+                Addr:         r.Addr,
+                ReadTimeout:  5 * time.Second,
+                WriteTimeout: 5 * time.Second,
+                Handler:      r.router,
+        }
+        // send feedback on listener error
+        e &lt;- r.server.ListenAndServe()</span>
+}
+
+// Stop - gracefully stops the REST API
+func (r *REST) Stop() error <span class="cov0" title="0">{
+        var err error // error holder
+        ctxShutDown, cancel := context.WithTimeout(context.Background(), 25*time.Second)
+        defer func() </span><span class="cov0" title="0">{
+                cancel()
+        }</span>()
+
+        <span class="cov0" title="0">if err = r.server.Shutdown(ctxShutDown); err != nil </span><span class="cov0" title="0">{
+                log.Error().Err(err).Msg("server shutdown failed")
+
+                return err
+        }</span>
+
+        <span class="cov0" title="0">log.Info().Msg("Server stopped properly")
+        if err == http.ErrServerClosed </span><span class="cov0" title="0">{
+                err = nil
+        }</span>
+
+        <span class="cov0" title="0">return err</span>
+}
+
+// WriteError - formats the error response
+func (r *REST) WriteError(w http.ResponseWriter, statusCode int, err string) <span class="cov8" title="1">{
+
+        w.Header().Set("Content-Type", "application/json; charset=utf-8")
+        w.Header().Set("X-Content-Type-Options", "nosniff")
+        w.WriteHeader(statusCode)
+
+        errStruct := struct {
+                ErrorStatus     string `json:"status,omitempty"`
+                ErrorStatusCode int    `json:"code,omitempty"`
+                Message         string `json:"message,omitempty"`
+        }{
+                http.StatusText(statusCode),
+                statusCode,
+                err,
+        }
+
+        json.NewEncoder(w).Encode(errStruct)
+}</span>
+
+// WriteJSON - formats the json response
+func (r *REST) WriteJSON(w http.ResponseWriter, statusCode int, response interface{}) <span class="cov8" title="1">{
+
+        w.Header().Set("Content-Type", "application/json; charset=utf-8")
+        w.Header().Set("X-Content-Type-Options", "nosniff")
+        w.WriteHeader(statusCode)
+
+        json.NewEncoder(w).Encode(response)
+}</span>
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package rest
+
+import (
+        "github.com/julienschmidt/httprouter"
+)
+
+func (r *REST) loadRoutes() <span class="cov0" title="0">{
+        r.router = httprouter.New()
+
+        r.router.GET("/healthcheck", r.Healthcheck)
+
+        r.router.POST("/wallets", r.Auth(r.CreateWallet))
+        r.router.GET("/wallets", r.Auth(r.GetWallets))
+        r.router.GET("/wallets/:id", r.Auth(r.GetWallet))
+
+        r.router.PATCH("/wallets/:id/funds", r.Auth(r.UpdateWalletFunds))
+        r.router.PATCH("/transaction/:id/reference", r.Auth(r.UpdateTransaction))
+}</span>
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package rest
+
+import (
+        "encoding/json"
+        "net/http"
+        "strconv"
+
+        "github.com/julienschmidt/httprouter"
+)
+
+// UpdateWalletFunds - endpoint updates the wallets funds by the requested sum
+func (r *REST) UpdateWalletFunds(w http.ResponseWriter, req *http.Request, p httprouter.Params) <span class="cov8" title="1">{
+        ID, err := strconv.ParseUint(p.ByName("id"), 10, 64)
+        if err != nil </span><span class="cov0" title="0">{
+                r.WriteError(w, http.StatusBadRequest, err.Error())
+                return
+        }</span>
+        <span class="cov8" title="1">sum := struct {
+                Sum       float64 `json:"sum"`
+                Reference string  `json:"reference"`
+        }{}
+        defer req.Body.Close()
+
+        err = json.NewDecoder(req.Body).Decode(&amp;sum)
+        if err != nil </span><span class="cov0" title="0">{
+                r.WriteError(w, http.StatusBadRequest, err.Error())
+                return
+        }</span>
+
+        <span class="cov8" title="1">wallet, transaction, err := r.DB.UpdateWalletFunds(ID, sum.Sum, sum.Reference)
+        if err != nil </span><span class="cov8" title="1">{
+                r.WriteError(w, http.StatusInternalServerError, err.Error())
+                return
+        }</span>
+
+        <span class="cov8" title="1">r.WriteJSON(w, http.StatusOK, map[string]interface{}{
+                "wallet":      wallet,
+                "transaction": transaction,
+        })</span>
+}
+
+// UpdateTransaction - endpoint updates the transaction with new reference
+func (r *REST) UpdateTransaction(w http.ResponseWriter, req *http.Request, p httprouter.Params) <span class="cov8" title="1">{
+        ID, err := strconv.ParseUint(p.ByName("id"), 10, 64)
+        if err != nil </span><span class="cov0" title="0">{
+                r.WriteError(w, http.StatusBadRequest, err.Error())
+                return
+        }</span>
+        <span class="cov8" title="1">sum := struct {
+                Reference string `json:"reference"`
+        }{}
+        defer req.Body.Close()
+
+        err = json.NewDecoder(req.Body).Decode(&amp;sum)
+        if err != nil </span><span class="cov0" title="0">{
+                r.WriteError(w, http.StatusBadRequest, err.Error())
+                return
+        }</span>
+
+        <span class="cov8" title="1">transaction, err := r.DB.UpdateTransaction(ID, sum.Reference)
+        if err != nil </span><span class="cov0" title="0">{
+                r.WriteError(w, http.StatusInternalServerError, err.Error())
+                return
+        }</span>
+
+        <span class="cov8" title="1">r.WriteJSON(w, http.StatusOK, transaction)</span>
+}
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package rest
+
+import (
+        "encoding/json"
+        "net/http"
+        "strconv"
+
+        "github.com/efimovalex/wallet/adapters/model"
+        "github.com/julienschmidt/httprouter"
+)
+
+// CreateWallet - endpoint that creates a wallet
+func (r *REST) CreateWallet(w http.ResponseWriter, req *http.Request, _ httprouter.Params) <span class="cov8" title="1">{
+
+        wallet := model.Wallet{}
+
+        err := json.NewDecoder(req.Body).Decode(&amp;wallet)
+        if err != nil </span><span class="cov0" title="0">{
+                r.WriteError(w, http.StatusBadRequest, err.Error())
+                return
+        }</span>
+
+        <span class="cov8" title="1">defer req.Body.Close()
+
+        dbWallet, err := r.DB.CreateWallet(wallet.OwnerAccountID)
+        if err != nil </span><span class="cov0" title="0">{
+                r.WriteError(w, http.StatusInternalServerError, err.Error())
+                return
+        }</span>
+
+        <span class="cov8" title="1">r.WriteJSON(w, http.StatusCreated, dbWallet)
+
+        return</span>
+}
+
+// GetWallets - endpoint that retrieves all wallets
+func (r *REST) GetWallets(w http.ResponseWriter, req *http.Request, _ httprouter.Params) <span class="cov8" title="1">{
+        dbWallets, err := r.DB.GetWallets(0, 0)
+        if err != nil </span><span class="cov0" title="0">{
+                r.WriteError(w, http.StatusInternalServerError, err.Error())
+                return
+        }</span>
+
+        <span class="cov8" title="1">r.WriteJSON(w, http.StatusOK, dbWallets)</span>
+}
+
+// GetWallet - endpoint that retrieves a wallet
+func (r *REST) GetWallet(w http.ResponseWriter, req *http.Request, p httprouter.Params) <span class="cov8" title="1">{
+        ID, err := strconv.ParseUint(p.ByName("id"), 10, 64)
+        if err != nil </span><span class="cov0" title="0">{
+                r.WriteError(w, http.StatusBadRequest, err.Error())
+                return
+        }</span>
+
+        <span class="cov8" title="1">dbWallet, err := r.DB.GetWallet(ID)
+        if err != nil </span><span class="cov0" title="0">{
+                r.WriteError(w, http.StatusInternalServerError, err.Error())
+                return
+        }</span>
+
+        <span class="cov8" title="1">r.WriteJSON(w, http.StatusOK, dbWallet)</span>
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>

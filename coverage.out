@@ -1,16 +1,4 @@
 mode: set
-github.com/efimovalex/wallet/rest/rest.go:38.36,42.16 3 0
-github.com/efimovalex/wallet/rest/rest.go:48.2,63.32 6 0
-github.com/efimovalex/wallet/rest/rest.go:42.16,46.3 2 0
-github.com/efimovalex/wallet/rest/rest.go:67.29,70.15 3 0
-github.com/efimovalex/wallet/rest/rest.go:74.2,74.54 1 0
-github.com/efimovalex/wallet/rest/rest.go:80.2,81.33 2 0
-github.com/efimovalex/wallet/rest/rest.go:85.2,85.12 1 0
-github.com/efimovalex/wallet/rest/rest.go:70.15,72.3 1 0
-github.com/efimovalex/wallet/rest/rest.go:74.54,78.3 2 0
-github.com/efimovalex/wallet/rest/rest.go:81.33,83.3 1 0
-github.com/efimovalex/wallet/rest/rest.go:89.78,106.2 5 1
-github.com/efimovalex/wallet/rest/rest.go:109.87,116.2 4 1
 github.com/efimovalex/wallet/rest/routes.go:7.29,18.2 7 0
 github.com/efimovalex/wallet/rest/transactions.go:12.97,14.16 2 1
 github.com/efimovalex/wallet/rest/transactions.go:18.2,25.16 4 1
@@ -44,3 +32,15 @@ github.com/efimovalex/wallet/rest/filters.go:11.78,12.51 1 0
 github.com/efimovalex/wallet/rest/filters.go:12.51,20.4 1 0
 github.com/efimovalex/wallet/rest/filters.go:20.9,24.4 2 0
 github.com/efimovalex/wallet/rest/healthcheck.go:10.91,12.2 1 0
+github.com/efimovalex/wallet/rest/rest.go:38.36,42.16 3 0
+github.com/efimovalex/wallet/rest/rest.go:48.2,63.32 6 0
+github.com/efimovalex/wallet/rest/rest.go:42.16,46.3 2 0
+github.com/efimovalex/wallet/rest/rest.go:67.29,70.15 3 0
+github.com/efimovalex/wallet/rest/rest.go:74.2,74.54 1 0
+github.com/efimovalex/wallet/rest/rest.go:80.2,81.33 2 0
+github.com/efimovalex/wallet/rest/rest.go:85.2,85.12 1 0
+github.com/efimovalex/wallet/rest/rest.go:70.15,72.3 1 0
+github.com/efimovalex/wallet/rest/rest.go:74.54,78.3 2 0
+github.com/efimovalex/wallet/rest/rest.go:81.33,83.3 1 0
+github.com/efimovalex/wallet/rest/rest.go:89.78,106.2 5 1
+github.com/efimovalex/wallet/rest/rest.go:109.87,116.2 4 1
