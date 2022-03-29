@@ -20,13 +20,13 @@ jobs:
             mv ~/docker-compose /usr/local/bin/docker-compose
       - run:
           name: Build images of services & Start all services declared in docker-compose.yml
-          command: make up
+          command: sudo make up
       - run:
           name: Run tests
-          command: make test
+          command: sudo make test
       - run:
           name: Run coverage
-          command: make cov
+          command: sudo make cov
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
