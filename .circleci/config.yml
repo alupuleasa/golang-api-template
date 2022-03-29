@@ -35,7 +35,7 @@ jobs:
       - run:
           name: Run tests
           command: |
-            docker exec -it wallet-service cd /go/src/wallet-service & make cov
+            docker ps
 
       - run:
           name: Run coverage
