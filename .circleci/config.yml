@@ -10,20 +10,6 @@ jobs:
       - image: cimg/base:2021.04
     steps:
       - checkout
-      # - run:
-      #     name: "Start CI/CD"
-      #     command: |
-      #         sudo apt-get update
-      #         sudo apt-get install -y cowsay
-      #         sudo cowsay Continuous Integration Rocks!
-      # - run:
-      #     name: Install Docker Compose
-      #     environment:
-      #       COMPOSE_VERSION: '3.6'
-      #     command: |
-      #       sudo curl -fsSL https://get.docker.com -o get-docker.sh
-      #       sudo sh get-docker.sh
-      #       sudo service docker start
       - run:
           name: Install Docker Compose
           environment:
@@ -33,6 +19,10 @@ jobs:
             chmod +x ~/docker-compose
             sudo mv ~/docker-compose /usr/local/bin/docker-compose
             sudo service docker start
+      - setup_remote_docker
+      - run:
+          name: Build images of services declared in docker-compose.yml
+          command: docker-compose build
       - run:
           name: Build images of services & Start all services declared in docker-compose.yml
           command: sudo make up
