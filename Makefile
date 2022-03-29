@@ -120,7 +120,7 @@ cov: ## Runs coverage tool
 	@if [ -f /.dockerenv ] ; then \
 		$(GOCOV); \
 	else \
-		echo "running coverage in docker env ..." ; \
+		echo -e ${RED}running coverage in docker env ...${NC} ; \
 		$(DOCKERCMD) cov;\
 	fi;
 	@exit $(.SHELLSTATUS)
